@@ -7,6 +7,7 @@ export class ExampleApi {
     }
 
     async getProducts() {
+        console.log("api called");
         return await axios.get<ProductShortInfo[]>(`${this.basename}/api/products`);
     }
 
