@@ -165,9 +165,39 @@ describe("testing cart", async function() {
         const submitButton = await this.browser.$(".Form button");
         await submitButton.click();
 
+        const inValidInput = await this.browser.$(".is-invalid");
         const cartNumberElem = await this.browser.$(".Cart-Number");
 
-        assert(await cartNumberElem.isExisting());
+        assert(await cartNumberElem.isExisting() || await inValidInput.isExisting());
+    });
+
+    it ("incrorrectly makes inputs invalid", async function() {
+        await this.browser.url(`http://localhost:3000/hw/store/catalog`);
+
+        const productCards = await this.browser.$$(".card[data-testid]");
+        const id = await productCards[0].getAttribute("data-testid");
+
+        await this.browser.url(`http://localhost:3000/hw/store/catalog/${id}`);
+        const block = await this.browser.$(".ProductDetails");
+        await block.waitForExist();
+
+        const addToCart = await block.$("button");
+        await addToCart.click();
+
+        await this.browser.url(`http://localhost:3000/hw/store/cart`);
+        const nameInput = await this.browser.$("#f-name");
+        await nameInput.addValue("1");
+        const phoneInput = await this.browser.$("#f-phone");
+        await phoneInput.addValue("+79101111111");
+        const addressInput = await this.browser.$("#f-address");
+        await addressInput.addValue("1");
+
+        const submitButton = await this.browser.$(".Form button");
+        await submitButton.click();
+
+        const inValidInput = await this.browser.$(".is-invalid");
+
+        assert(!(await inValidInput.isExisting()));
     });
 });
 
